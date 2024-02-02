@@ -1,0 +1,90 @@
+#include <stdio.h>
+
+#define MAX_D 31
+
+void inTemps(float temps[], int *nD) {
+  do {
+    printf("Enter the number of days (up to %d): ", MAX_D);
+    scanf("%d", nD);
+  } while (*nD <= 0 || *nD > MAX_D);
+
+  printf("Enter the temperature for each day:\n");
+  for (int i = 0; i < *nD; i++) {
+    printf("Day %d: ", i + 1);
+    scanf("%f", &temps[i]);
+  }
+}
+
+float calcAvg(float temps[], int nD) {
+  float sum = 0;
+  for (int i = 0; i < nD; i++) {
+    sum += temps[i];
+  }
+  return sum / nD;
+}
+
+void findExts(float temps[], int nD, float *hiTemp, int *hiDay, float *loTemp, int *loDay) {
+  *hiTemp = *loTemp = temps[0];
+  *hiDay = *loDay = 1;
+
+  for (int i = 1; i < nD; i++) {
+    if (temps[i] > *hiTemp) {
+      *hiTemp = temps[i];
+      *hiDay = i + 1;
+    }
+    if (temps[i] < *loTemp) {
+      *loTemp = temps[i];
+      *loDay = i + 1;
+    }
+  }
+}
+
+void convTemps(float temps[], int nD, char convType) {
+  for (int i = 0; i < nD; i++) {
+    if (convType == 'C') {
+      temps[i] = (temps[i] - 32) * 5 / 9;
+    } else if (convType == 'F') {
+      temps[i] = temps[i] * 9 / 5 + 32;
+    } else {
+      printf("Invalid conversion type.\n");
+      return;
+    }
+  }
+}
+
+void dispData(float temps[], int nD) {
+  printf("\nTemperature Data:\n");
+  printf("----------------\n");
+  printf("Day\tTemperature\n");
+  for (int i = 0; i < nD; i++) {
+    printf("%d\t%.2f\n", i + 1, temps[i]);
+  }
+}
+
+int main() {
+  float temps[MAX_D];
+  int nD;
+  float avg, hiTemp, loTemp;
+  int hiDay, loDay;
+  char convType;
+
+  printf("Data Analysis: Weather Trends by MOHO, CSE, SEU\n\n");
+
+  inTemps(temps, &nD);
+
+  avg = calcAvg(temps, nD);
+
+  findExts(temps, nD, &hiTemp, &hiDay, &loTemp, &loDay);
+
+  printf("\nAverage Temperature: %.2f\n", avg);
+  printf("Highest Temperature: %.2f on Day %d\n", hiTemp, hiDay);
+  printf("Lowest Temperature: %.2f on Day %d\n", loTemp, loDay);
+
+  printf("\nEnter 'C' to convert to Celsius, 'F' to convert to Fahrenheit: ");
+  scanf(" %c", &convType);
+  convTemps(temps, nD, convType);
+
+  dispData(temps, nD);
+
+  return 0;
+}
